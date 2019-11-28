@@ -38,7 +38,11 @@ matrix:
           echo "$DOCKER_TOKEN" | docker login -u "$DOCKER_USERNAME" --password-stdin;
           docker images;
           docker tag labgrid-client labgrid/client;
+          docker tag labgrid-exporter labgrid/exporter;
+          docker tag labgrid-coordinator labgrid/coordinator;
           docker push labgrid/client;
+          docker push labgrid/exporter;
+          docker push labgrid/coordinator;
           fi
   allow_failures:
     - stage: optional

@@ -8,10 +8,8 @@ addons:
       openssh-client
 
 python:
-  - "3.5"
   - "3.6"
   - "3.7"
-  - "3.8"
 before_install:
   - ssh-keygen -f ~/.ssh/id_ed25519.local -t ed25519 -N ""
   - cat ~/.ssh/id_ed25519.local.pub > ~/.ssh/authorized_keys
@@ -42,7 +40,5 @@ matrix:
           docker tag labgrid-client labgrid/client;
           docker push labgrid/client;
           fi
-    - stage: optional
-      python: "nightly"
   allow_failures:
     - stage: optional

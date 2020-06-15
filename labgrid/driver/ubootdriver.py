@@ -163,6 +163,7 @@ class UBootDriver(CommandMixin, Driver, CommandProtocol, LinuxBootProtocol):
                 raise Exception("Password entry needed but no password set")
         else:
             self.console.write(self.interrupt.encode('ASCII'))
+            self.console.expect(self.prompt, 0.5)
             self._check_prompt()
         for command in self.init_commands:  #pylint: disable=not-an-iterable
             self._run_check(command)

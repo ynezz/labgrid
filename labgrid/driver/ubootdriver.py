@@ -24,6 +24,7 @@ class UBootDriver(CommandMixin, Driver, CommandProtocol, LinuxBootProtocol):
         prompt (str): The default UBoot Prompt
         password (str): optional password to unlock UBoot
         init_commands (Tuple[str]): a tuple of commands to run after unlock
+        init_command_timeout (int): optional, timeout for init command duration
         interrupt(str): interrupt character to use to go to prompt
         password_prompt (str): string to detect the password prompt
         boot_expression (str): string to search for on UBoot start
@@ -38,6 +39,7 @@ class UBootDriver(CommandMixin, Driver, CommandProtocol, LinuxBootProtocol):
     password = attr.ib(default="", validator=attr.validators.instance_of(str))
     interrupt = attr.ib(default="\n", validator=attr.validators.instance_of(str))
     init_commands = attr.ib(default=attr.Factory(tuple), converter=tuple)
+    init_command_timeout = attr.ib(default=30, validator=attr.validators.instance_of(int))
     password_prompt = attr.ib(default="enter Password:", validator=attr.validators.instance_of(str))
     boot_expression = attr.ib(default=r"U-Boot 20\d+", validator=attr.validators.instance_of(str))
     bootstring = attr.ib(default=r"Linux version \d", validator=attr.validators.instance_of(str))
@@ -166,7 +168,7 @@ class UBootDriver(CommandMixin, Driver, CommandProtocol, LinuxBootProtocol):
             self.console.expect(self.prompt, 0.5)
             self._check_prompt()
         for command in self.init_commands:  #pylint: disable=not-an-iterable
-            self._run_check(command)
+            self._run_check(command, timeout=self.init_command_timeout)
 
     @Driver.check_active
     @step()

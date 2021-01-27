@@ -5,6 +5,7 @@ import re
 
 import attr
 from pexpect import TIMEOUT
+from time import sleep
 
 from ..factory import target_factory
 from ..protocol import CommandProtocol, ConsoleProtocol, LinuxBootProtocol
@@ -30,6 +31,7 @@ class UBootDriver(CommandMixin, Driver, CommandProtocol, LinuxBootProtocol):
         boot_expression (str): string to search for on UBoot start
         bootstring (str): string that indicates that the Kernel is booting
         boot_command (str): optional boot command to boot target
+        boot_command_delay (int): optional delay before executing boot_command
         login_timeout (int): optional, timeout for login prompt detection
 
     """
@@ -44,6 +46,7 @@ class UBootDriver(CommandMixin, Driver, CommandProtocol, LinuxBootProtocol):
     boot_expression = attr.ib(default=r"U-Boot 20\d+", validator=attr.validators.instance_of(str))
     bootstring = attr.ib(default=r"Linux version \d", validator=attr.validators.instance_of(str))
     boot_command = attr.ib(default="run bootcmd", validator=attr.validators.instance_of(str))
+    boot_command_delay = attr.ib(default=0, validator=attr.validators.instance_of(int))
     login_timeout = attr.ib(default=30, validator=attr.validators.instance_of(int))
 
     def __attrs_post_init__(self):
@@ -188,4 +191,5 @@ class UBootDriver(CommandMixin, Driver, CommandProtocol, LinuxBootProtocol):
         if name:
             self.console.sendline("boot -v {}".format(name))
         else:
+            sleep(self.boot_command_delay)
             self.console.sendline(self.boot_command)

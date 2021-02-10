@@ -157,6 +157,12 @@ class ShellDriver(CommandMixin, Driver, CommandProtocol, FileTransferProtocol):
                     # newline to check the state
                     self.console.sendline("")
 
+                if before > last_before:
+                    # we're still receiving something
+                    # let's assume the target is not idle so issue a
+                    # newline to check the state anyway
+                    self.console.sendline("")
+
             elif index == 3:
                 # we have just activated a console here
                 # lets start over again and see if login or prompt will appear
